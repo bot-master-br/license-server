@@ -202,7 +202,7 @@ def validate():
 # Rotas de Admin — protegidas por X-Admin-Secret
 # ---------------------------------------------------------------------------
 
-@app.route("/api/admin/licenses", methods=["GET"])
+@app.route("/manage/licenses", methods=["GET"])
 @_require_admin
 def list_licenses():
     """Lista todas as licenças."""
@@ -214,7 +214,7 @@ def list_licenses():
     return jsonify([dict(r) for r in rows])
 
 
-@app.route("/api/admin/licenses", methods=["POST"])
+@app.route("/manage/licenses", methods=["POST"])
 @_require_admin
 def create_license():
     """
@@ -251,7 +251,7 @@ def create_license():
     }), 201
 
 
-@app.route("/api/admin/licenses/<key>/deactivate", methods=["POST"])
+@app.route("/manage/licenses/<key>/deactivate", methods=["POST"])
 @_require_admin
 def deactivate_license(key: str):
     """Desativa uma licença sem deletar."""
@@ -261,7 +261,7 @@ def deactivate_license(key: str):
     return jsonify({"ok": True, "key": key})
 
 
-@app.route("/api/admin/licenses/<key>/reactivate", methods=["POST"])
+@app.route("/manage/licenses/<key>/reactivate", methods=["POST"])
 @_require_admin
 def reactivate_license(key: str):
     """Reativa uma licença desativada."""
@@ -271,7 +271,7 @@ def reactivate_license(key: str):
     return jsonify({"ok": True, "key": key})
 
 
-@app.route("/api/admin/licenses/<key>/reset-machine", methods=["POST"])
+@app.route("/manage/licenses/<key>/reset-machine", methods=["POST"])
 @_require_admin
 def reset_machine(key: str):
     """Remove o binding de máquina (permite ativar em outra máquina)."""
@@ -281,7 +281,7 @@ def reset_machine(key: str):
     return jsonify({"ok": True, "key": key})
 
 
-@app.route("/api/admin/licenses/<key>/renew", methods=["POST"])
+@app.route("/manage/licenses/<key>/renew", methods=["POST"])
 @_require_admin
 def renew_license(key: str):
     """
@@ -310,7 +310,7 @@ def renew_license(key: str):
     return jsonify({"ok": True, "key": key, "new_expires_at": new_expiry})
 
 
-@app.route("/api/admin/validations", methods=["GET"])
+@app.route("/manage/validations", methods=["GET"])
 @_require_admin
 def list_validations():
     """Retorna as últimas 200 validações (log de acesso)."""
@@ -321,7 +321,7 @@ def list_validations():
     return jsonify([dict(r) for r in rows])
 
 
-@app.route("/api/admin/stats", methods=["GET"])
+@app.route("/manage/stats", methods=["GET"])
 @_require_admin
 def stats():
     """Resumo rápido do servidor."""
