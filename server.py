@@ -223,17 +223,21 @@ def create_license():
     """
     data = request.get_json(silent=True) or {}
     player_name = str(data.get("player_name", "")).strip()
-    months      = int(data.get("months", 1))
+    months      = float(data.get("months", 1))
+    days        = int(data.get("days", 0))
     notes       = str(data.get("notes", "")).strip()
 
     if not player_name:
         return jsonify({"error": "player_name é obrigatório"}), 400
-    if months < 1:
-        return jsonify({"error": "months deve ser >= 1"}), 400
+
+    # Calcula dias totais — aceita dias direto ou meses
+    total_days = days if days > 0 else int(round(30 * months))
+    if total_days < 1:
+        return jsonify({"error": "período deve ser >= 1 dia"}), 400
 
     key        = f"BM-{secrets.token_hex(4).upper()}-{secrets.token_hex(4).upper()}"
     now        = datetime.now()
-    expires_at = (now + timedelta(days=30 * months)).isoformat(timespec="seconds")
+    expires_at = (now + timedelta(days=total_days)).isoformat(timespec="seconds")
 
     with get_db() as db:
         db.execute(
@@ -242,12 +246,12 @@ def create_license():
             (key, player_name, now.isoformat(timespec="seconds"), expires_at, notes)
         )
 
-    print(f"[CRIADA] {key} | {player_name} | expira em {expires_at}")
+    print(f"[CRIADA] {key} | {player_name} | {total_days}d | expira em {expires_at}")
     return jsonify({
         "key":        key,
         "player_name": player_name,
         "expires_at": expires_at,
-        "months":     months,
+        "days":       total_days,
     }), 201
 
 
