@@ -255,6 +255,20 @@ def create_license():
     }), 201
 
 
+@app.route("/manage/licenses/<key>", methods=["DELETE"])
+@_require_admin
+def delete_license(key: str):
+    """Deleta uma licença permanentemente."""
+    with get_db() as db:
+        row = db.execute("SELECT key FROM licenses WHERE key = ?", (key,)).fetchone()
+        if not row:
+            return jsonify({"error": "Chave não encontrada"}), 404
+        db.execute("DELETE FROM licenses WHERE key = ?", (key,))
+        db.execute("DELETE FROM validations WHERE key = ?", (key,))
+    print(f"[DELETADA] {key}")
+    return jsonify({"ok": True, "key": key})
+
+
 @app.route("/manage/licenses/<key>/deactivate", methods=["POST"])
 @_require_admin
 def deactivate_license(key: str):
